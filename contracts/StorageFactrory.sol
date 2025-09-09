@@ -39,3 +39,13 @@ contract SimpleStorage {
         return myFavoriteNumber;
     }
 }
+
+contract StorageFactory{
+    // type visibility name
+    SimpleStorage public simpleStorage;
+
+    function createSimpleStorageContract() public {
+        simpleStorage = new SimpleStorage();
+
+    }
+}
