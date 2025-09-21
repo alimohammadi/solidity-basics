@@ -46,10 +46,18 @@ contract FundMe{
         // What is revert?
         // Undo any actions that have been done, and send the remaining gas back
         // If you send fail transaction you spent gas
+    }
 
+    // function callMeRightAway(params) public{}
+    address public owner;
+
+    constructor() {
+        owner = msg.sender;
     }
 
     function withdraw() public payable {
+        require(msg.sender == owner, "Must be owner");
+
         // for loop
         for (uint256 funderIndx = 0; funderIndx <= funders.length; funderIndx++) 
         {
