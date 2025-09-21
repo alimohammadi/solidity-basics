@@ -55,7 +55,7 @@ contract FundMe{
         owner = msg.sender;
     }
 
-    function withdraw() public payable {
+    function withdraw() public onlyOwner {
         require(msg.sender == owner, "Must be owner");
 
         // for loop
@@ -82,6 +82,13 @@ contract FundMe{
        (bool callSuccess, ) = payable(msg.sender).call{value:address(this).balance}("");
 
        require(callSuccess, "Call failed");
+    }
+
+    modifier onlyOwner(){
+        // Fist call this
+        require(msg.sender==owner, "Sender is not owner!");
+        // then add other parts(The order of _ is matter)
+        _;
     }
 }
 
