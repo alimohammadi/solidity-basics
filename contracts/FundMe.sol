@@ -42,13 +42,20 @@ contract FundMe{
         // msg.value.getConversionRate();
 
         funders.push(msg.sender);
-        addressToAmountFounded[msg.sender] = addressToAmountFounded[msg.sender] + msg.value;
+        addressToAmountFounded[msg.sender] += msg.value;
         // What is revert?
         // Undo any actions that have been done, and send the remaining gas back
         // If you send fail transaction you spent gas
 
     }
 
-    // function withdraw() public payable {}
+    function withdraw() public payable {
+        // for loop
+        for (uint256 funderIndx = 0; funderIndx <= funders.length; funderIndx++) 
+        {
+           address funder = funders[funderIndx];
+           addressToAmountFounded[funder] = 0;
+        }
+    }
 }
 
