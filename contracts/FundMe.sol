@@ -27,6 +27,7 @@ import {PriceConverter} from "./PriceConvertor.sol";
 
 // constant, immutable => reduce the gas cost
 
+error NotOwner();
 
 contract FundMe{
     using PriceConverter for uint256;
@@ -89,9 +90,17 @@ contract FundMe{
 
     modifier onlyOwner(){
         // Fist call this
-        require(msg.sender == i_owner, "Sender is not owner!");
+        if(msg.sender != i_owner){
+            revert NotOwner();
+        }
+        // require(msg.sender == i_owner, "Sender is not owner!");
         // then add other parts(The order of _ is matter)
         _;
     }
+
+    // What happen if someone sends this contract ETH without calling the fund function
+    // recieve()
+    // fallback()
+    
 }
 
