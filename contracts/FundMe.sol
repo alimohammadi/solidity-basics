@@ -5,8 +5,36 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import {PriceConverter} from "./PriceConvertor.sol";
+// import {PriceConverter} from "./PriceConvertor.sol";
+import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 
+library PriceConverter{
+    function getPrice() internal view returns (uint256) {
+        // AggregatorV3Interface();
+        // Address 0x694AA1769357215DE4FAC081bf1f309aDC325306
+        // ABI
+        AggregatorV3Interface priceFeed =  AggregatorV3Interface(0xfEefF7c3fB57d18C5C6Cdd71e45D2D0b4F9377bF);
+       (,int256 price,,,) =  priceFeed.latestRoundData(); // Price of ETH in terms of USD
+        
+        return uint256(price) *1e10;
+    }
+
+    function getConversionRate(uint256 ethAmount) internal view returns (uint256){
+        // 1 ETH?
+        // 2000_000000000000000000
+        uint256 ethPrice = getPrice();
+
+        // (2000_000000000000000000 * 1_000000000000000000) / 1e18
+        // 2000 $ = 1 ETH
+        uint256 ethAmountInUSD =  (ethPrice * ethAmount) / 1e18;
+
+        return ethAmountInUSD;
+    }
+
+    function getVersion() internal view returns (uint256){
+      return AggregatorV3Interface(0xfEefF7c3fB57d18C5C6Cdd71e45D2D0b4F9377bF).version();
+    }
+}
 // solhint-disable-next-line interface-starts-with-i
 // interface AggregatorV3Interface {
 //   function decimals() external view returns (uint8);
@@ -99,8 +127,12 @@ contract FundMe{
     }
 
     // What happen if someone sends this contract ETH without calling the fund function
-    // recieve()
-    // fallback()
-    
+    receive() external payable {
+        fund();
+    }
+
+    fallback() external payable { 
+        fund();
+    }
 }
 
