@@ -59,7 +59,7 @@ contract FundMe{
         require(msg.sender == owner, "Must be owner");
 
         // for loop
-        for (uint256 funderIndx = 0; funderIndx <= funders.length; funderIndx++) 
+        for (uint256 funderIndx = 0; funderIndx < funders.length; funderIndx++) 
         {
            address funder = funders[funderIndx];
            addressToAmountFounded[funder] = 0;
