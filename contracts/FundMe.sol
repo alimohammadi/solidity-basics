@@ -25,20 +25,29 @@ import {PriceConverter} from "./PriceConvertor.sol";
 //     returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound);
 // }
 
+// constant, immutable => reduce the gas cost
+
 
 contract FundMe{
     using PriceConverter for uint256;
-    uint256 public minimumUsd = 5 * 1e18;
+    uint256 public constant MIINIMUM_USD = 5 * 1e18;// using constant keyword reduce the gas size
 
     address[] public funders;
     mapping(address founder=>uint256 amountFunded) public addressToAmountFounded;
+
+    // function callMeRightAway(params) public{}
+    address public immutable i_owner;
+
+    constructor() {
+        i_owner = msg.sender;
+    }
 
     function fund() public payable{
         // Allow user to send money
         // Have a minimum $ sent
 
         // How do we send ETH to this contract?
-        require(msg.value.getConversionRate() >= minimumUsd, "didn't send enough ETH"); // 1e18 = 1 ETH
+        require(msg.value.getConversionRate() >= MIINIMUM_USD, "didn't send enough ETH"); // 1e18 = 1 ETH
         // msg.value.getConversionRate();
 
         funders.push(msg.sender);
@@ -48,15 +57,9 @@ contract FundMe{
         // If you send fail transaction you spent gas
     }
 
-    // function callMeRightAway(params) public{}
-    address public owner;
-
-    constructor() {
-        owner = msg.sender;
-    }
 
     function withdraw() public onlyOwner {
-        require(msg.sender == owner, "Must be owner");
+        require(msg.sender == i_owner, "Must be owner");
 
         // for loop
         for (uint256 funderIndx = 0; funderIndx < funders.length; funderIndx++) 
@@ -86,7 +89,7 @@ contract FundMe{
 
     modifier onlyOwner(){
         // Fist call this
-        require(msg.sender==owner, "Sender is not owner!");
+        require(msg.sender == i_owner, "Sender is not owner!");
         // then add other parts(The order of _ is matter)
         _;
     }
